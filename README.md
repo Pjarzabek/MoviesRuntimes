@@ -4,7 +4,7 @@
 
 __These are the times when you could think “Gosh, movies are getting ridiculously long lately”. Are they? I asked myself the same question. I discussed the matter with some fellow movie lovers. They had similar feelings. That wasn’t enough for me. I decided to use my data analysis skills to investigate this issue. In this article you can read what I have found out.__
 
-Final study is available in [Jupyter notebook]( https://github.com/Pjarzabek/MoviesRuntimes/blob/master/Are%20the%20movies%20getting%20longer.ipynb). You should read it if you want check what I’ve found. 
+Final study is available in [Jupyter notebook]( https://github.com/Pjarzabek/MoviesRuntimes/blob/master/Are%20the%20movies%20getting%20longer.ipynb). You should read it if you want to check what I’ve found. 
 
 Two Python scripts to review my code are available here: 
 + [movies_data.py]( https://github.com/Pjarzabek/MoviesRuntimes/blob/master/movies_data.py) – in this script the dataset was created and saved to csv.
