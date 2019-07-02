@@ -1,4 +1,5 @@
 import pandas as pd
+import math
 
 # Download data from IMDB website
 # Data description https://www.imdb.com/interfaces/
@@ -12,15 +13,15 @@ print(ratings.shape)
 # Merge data on 'tconst', which is unique id for any title in IMDB database.
 movies = pd.merge(movies, ratings, on='tconst')
 print(movies.shape)
-# In total there is almost 900k unique titles.
+# In total there is almost 950k unique titles.
 
 # Check titleType column.
 print(movies['titleType'].unique())
 # There are 11 types of titles, including TV shows, TV shows episodes, shorts and video games.
 # We are interested only in movies.
-movies = movies[movies['titleType'].isin(['movie', 'tvMovie'])]
+movies = movies[movies['titleType'].isin(['movie'])]  # , 'tvMovie'
 print(movies.shape)
-# The number of titles dropped significantly to 271k.
+# The number of titles dropped significantly to 235k.
 # Let's check movie genres
 genres = movies['genres'].unique()
 print(len(genres))
@@ -38,7 +39,7 @@ for column in movies.columns.values.tolist():
 
 movies = movies.dropna()
 print(movies.shape)
-# Number of movies dropped to 197k.
+# Number of movies dropped to 177k.
 # Descriptive statistics
 print(movies.describe())
 
@@ -49,19 +50,26 @@ print(movies.describe())
 
 movies = movies[movies['runtimeMinutes'] > 40]
 
-# Also we are not interested in niche movies, which could affect the final results.
-# We will look only for popular movies, which have significant number of votes.
-# We drop movies with less than 1000 votes and leave only the popular ones.
+# What’s more important, we are only interested in popular movies. There are thousands of movies in IMDb database
+# which have only a few dozen votes. They can skew our results.
+# Let’s say we will use 20% of most movies which got the most votes in every year.
 
-movies = movies[movies['numVotes'] >= 1000]
+popular_movies = pd.DataFrame()
+for year in range(1894, 2020):
+    movies_year = movies[movies['startYear'] == year].sort_values(by=['numVotes'], ascending=False)
+    if len(movies_year) > 10:  # Quick filter to eliminate experimental years of cinema
+        num_of_movies = math.floor(0.2 * len(movies_year))
+        twenty_percent = movies_year.iloc[0:num_of_movies]  # subset of 20% of most popular movies
+        popular_movies = popular_movies.append(twenty_percent)
+
+movies = popular_movies
 print(movies.describe())
-# After filtering out unpopular movies there are 27951 movies in our dataset.
-
+# After filtering there are 35531 movies in our dataset
 # Save data to CSV
-movies.to_csv('movies.csv', index=False)
-print('Success!')
+popular_movies.to_csv('movies.csv', index=False)
+print('movies.csv created successfully!')
 
 # The rest of data exploration will be done in movies.py file. The purpose of this
-# file is to reduce amount of time needed for calculations when rerunning the script.
+# script is to reduce amount of time needed for calculations when rerunning.
 # Also, there is no need to download data again every time when the script will be run.
-# The size of the dataset is reduced by over 99.9%. Deleted data was irrelevant in our study.
+# The size of the dataset is reduced by over 99%. Deleted data was irrelevant in our study.
