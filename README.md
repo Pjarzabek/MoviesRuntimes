@@ -8,4 +8,6 @@ Final study is available in [Jupyter notebook]( https://github.com/Pjarzabek/Mov
 
 Two Python scripts to review my code are available here: 
 + [movies_data.py]( https://github.com/Pjarzabek/MoviesRuntimes/blob/master/movies_data.py) – in this script the dataset was created and saved to csv.
-+ [movies.py]( https://github.com/Pjarzabek/MoviesRuntimes/blob/master/movies.py) – this script contains analysis done with Pandas and Matplotlib libraries. 
++ [movies.py]( https://github.com/Pjarzabek/MoviesRuntimes/blob/master/movies.py) – this script contains analysis done with Pandas and Matplotlib libraries. If you want to replicate my findings, use this script in pair with [movies.csv]( https://github.com/Pjarzabek/MoviesRuntimes/blob/master/movies.csv) dataset (2019/07/02).
+
+Feel free to comment and suggest some changes or ideas to work with this dataset further!
