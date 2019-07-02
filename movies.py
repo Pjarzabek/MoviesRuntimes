@@ -12,6 +12,7 @@ print(movies.describe())
 # Let's take a look at years distribution.
 # There is a possibility that the number of movies in the beginning of cinematography
 # will be to small to use in the report.
+
 # Let's plot a histogram of movies older than 1940.
 
 plt.hist(movies['startYear'][movies['startYear'] < 1940])
@@ -45,7 +46,7 @@ for i in range(0, len(movies_per_year_df)):
     year = movies_per_year_df.iloc[i, 0]
     movie_count = movies_per_year_df.iloc[i, 1]
     # Check if in a given year there were more than 30 movies.
-    if movie_count > 30:
+    if movie_count >= 30:
         movies_per_year_df = movies_per_year_df.iloc[i:, :]  # Drop years before current one in the loop
         # Check whether the rest of years have movie count above 30, if not, the loop continues.
         # If every year left has movie count above 30, the loop breaks and we have the answer.
@@ -54,13 +55,14 @@ for i in range(0, len(movies_per_year_df)):
             break
 
 print(start_year)
-# The dataset will start from the year 1931. Of course it was easy to see it by inspecting value counts table,
+# The dataset will start from the year 1919. Of course it was easy to see it by inspecting value counts table,
 # but the goal was to practice loops and conditions to automate the process.
+# also we need to remove movies released in 2019, because the year didn't end yet and it could harm our results.
 
-movies = movies[movies['startYear'] >= 1931]
+movies = movies[(movies['startYear'] >= start_year) & (movies['startYear'] < 2019)]
 print(movies.describe())
 
-# Our final data is 27743 movies starting from year 1931 until 2018.
+# Our final data is 35,074 movies starting from year 1919 until 2018.
 # Now let's plot distribution of movie lengths. We limited it to 40-200 minutes range to improve readability.
 # There are not many movies longer than 200 minutes and 40 is lower limit of our data.
 # Every bin corresponds to 10 minute range.
@@ -90,10 +92,10 @@ ax1.fill_between(statistics_grouped.index, avg_runtime_lower_band, avg_runtime_u
 ax1.set_title('Movies runtime by year')
 ax1.set_ylabel('Minutes')
 ax1.set_xlabel('Release year')
-ax1.set_xlim(1931, 2018)
+ax1.set_xlim(start_year, 2018)
 legend_sd = mpatches.Patch(color='aqua', label='Mean +/- standard deviation')  # Used mpatches to create rectangular for a legend.
 legend_line = mlines.Line2D([], [], color='blue', label='Mean runtime')
-ax1.legend(handles=[legend_line, legend_sd])  # Nice legend with rectangular and line.
+ax1.legend(handles=[legend_line, legend_sd])  # Pretty legend with rectangular and line.
 plt.show()
 
 # The plot shows that movies were getting longer until year 1960.
@@ -114,7 +116,7 @@ for year in statistics_grouped.index:
 
 statistics_grouped['included_movies_perc'] = percentage_of_included_movies
 print(statistics_grouped['included_movies_perc'].describe())
-# On average 78% of the popular movies were taken into account when creating the chart above.
+# On average 80% of the popular movies were taken into account when creating the chart above.
 
 # We can create a new chart with added plot for proportions
 
@@ -127,7 +129,7 @@ ax1.fill_between(statistics_grouped.index, avg_runtime_lower_band, avg_runtime_u
 ax1.set_title('Movies runtime by year')
 ax1.set_ylabel('Minutes')
 ax1.set_xlabel('Release year')
-ax1.set_xlim(1931, 2018)
+ax1.set_xlim(start_year, 2019)
 # Plot with proportions
 ax2 = ax1.twinx()
 ax2.plot(statistics_grouped['included_movies_perc'], color='olive')
@@ -140,7 +142,7 @@ dashed_line = mlines.Line2D([], [], color='red', label='Proportion = 0.7', lines
 ax1.legend(handles=[legend_line, legend_sd, legend_line_2, dashed_line])
 plt.show()
 
-# After 1950 all the time over 70% of popular movies were in the confidence interval area.
+# Almost all the time over 70% of popular movies were in the confidence interval area.
 # Let's see what will happen if we take a look at 50% of most popular movies using quartile data and the median.
 
 # Data
@@ -158,14 +160,14 @@ ax1.fill_between(statistics_grouped.index, avg_runtime_lower_band, avg_runtime_u
 ax1.set_title('Movies runtime by year')
 ax1.set_ylabel('Minutes')
 ax1.set_xlabel('Release year')
-ax1.set_xlim(1931, 2018)
+ax1.set_xlim(start_year, 2018)
 legend_sd = mpatches.Patch(color='aqua', label='Interquartile range')
 legend_line = mlines.Line2D([], [], color='blue', label='Median runtime')
 ax1.legend(handles=[legend_line, legend_sd])
 plt.show()
 
 # Still, there is no sign of movies getting longer, especially after 1960. Maybe the problem is that we
-# take into account too much movies from every year.
+# take into account too many movies from every year.
 # There is a possibility that only the most popular movies are getting longer. Let's take a look at movies from 1960
 # and newer (when uptrend stopped) and take into account only 50 most popular movies from every year.
 
@@ -193,7 +195,7 @@ ax1.fill_between(statistics_grouped_50.index, avg_runtime_lower_band, avg_runtim
 ax1.set_title('Runtime of 50 most popular movies by year')
 ax1.set_ylabel('Minutes')
 ax1.set_xlabel('Release year')
-ax1.set_xlim(1960, 2018)
+ax1.set_xlim(1960, 2019)
 legend_sd = mpatches.Patch(color='aqua', label='Mean +/- standard deviation')
 legend_line = mlines.Line2D([], [], color='blue', label='Mean runtime')
 ax1.legend(handles=[legend_line, legend_sd])
@@ -220,7 +222,7 @@ ax.plot(mean_all, color='purple')
 ax.set_title('Movies runtime by year')
 ax.set_ylabel('Minutes')
 ax.set_xlabel('Release year')
-ax.set_xlim(1960, 2018)
+ax.set_xlim(1960, 2019)
 ax.legend(labels=['10 most popular movies',
                   '30 most popular movies',
                   '50 most popular movies',
@@ -228,10 +230,10 @@ ax.legend(labels=['10 most popular movies',
                   'All popular movies'])
 plt.show()
 
-# No matter what number of most popular movies we take, there is no sign of trend.
+# It looks like in general more popular movies are longer (no trend in time).
 # When we consider less movies from every year, there is more volatility on the chart,
 # which is correct with our statistical intuition.
-# To be sure that more popular movies are not longer, let's create a table with mean
+# To be sure that more popular movies are longer, let's create a table with mean
 # from all n-most popular movies of the year - mean of means
 total_mean = pd.Series()
 mean_list = [mean_10, mean_30, mean_50, mean_100, mean_all]
@@ -242,12 +244,11 @@ for i in range(0, 5):
 
 print(total_mean)
 
-# As you can see in the table, no matter how many most popular movies we consider,
-# there is not much difference between average runtimes.
-# In case of 10 most popular movies from every year average runtime is even shorter,
-# but it is probably because of really small sample.
+# You can clearly see the difference between means.
+# The smaller sample from each year we take, the longer is the mean runtime.
+# The trend is in the popularity of movies, not their release date.
 
-# Let's create boxplot for every decade.
+# Let's create a boxplot for every decade.
 movies_by_decade = movies.copy()
 movies_by_decade['startYear'] = ((movies_by_decade['startYear'] // 10) * 10).astype('int64')
 sns.boxplot(x="startYear", y="runtimeMinutes", data=movies_by_decade, color='lightskyblue', showfliers=False)
